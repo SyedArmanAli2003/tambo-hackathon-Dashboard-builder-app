@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { z } from "zod";
 import { componentRegistry } from "@/lib/componentRegistry";
+import type { Dataset } from "@/contexts/DataContext";
 import {
   salesData,
   regionSalesData,
@@ -47,13 +48,18 @@ export const useTamboOrchestration = () => {
 
   /**
    * Analyze user request and generate component instructions
-   * This simulates what Tambo's AI would do
+   * Uses uploaded data when available, falls back to mock data
    */
-  const analyzeRequest = useCallback((userRequest: string): ComponentInstruction[] => {
+  const analyzeRequest = useCallback((userRequest: string, dataset?: Dataset): ComponentInstruction[] => {
     const request = userRequest.toLowerCase();
+    const instructions: ComponentInstruction[] = [];
+
+    // If user uploaded data, build dashboard from it
+    if (dataset) {
+      return buildFromUploadedData(request, dataset);
+    }
 
     // Keyword-based component selection (simulating AI decision-making)
-    const instructions: ComponentInstruction[] = [];
 
     // Sales/Revenue related
     if (request.includes("sales") || request.includes("revenue")) {
@@ -189,8 +195,133 @@ export const useTamboOrchestration = () => {
   /**
    * Generate AI explanation for the dashboard
    */
-  const generateExplanation = (request: string, componentCount: number): string => {
-    return `I've generated a dashboard with ${componentCount} components based on your request. The dashboard includes charts, metrics, and data tables to help you visualize your data.`;
+  const generateExplanation = (request: string, componentCount: number, datasetName?: string): string => {
+    const source = datasetName ? ` using your uploaded data "${datasetName}"` : "";
+    return `I've generated a dashboard with ${componentCount} components based on your request${source}. The dashboard includes charts, metrics, and data tables to help you visualize your data.`;
+  };
+
+  /**
+   * Build dashboard components from uploaded data
+   */
+  const buildFromUploadedData = (request: string, dataset: Dataset): ComponentInstruction[] => {
+    const instructions: ComponentInstruction[] = [];
+    const { data, columns, columnTypes, name } = dataset;
+    
+    const numericCols = columns.filter((c) => columnTypes[c] === "number");
+    const stringCols = columns.filter((c) => columnTypes[c] === "string");
+    const dateCols = columns.filter((c) => columnTypes[c] === "date");
+
+    // Determine a good label axis (string or date column)
+    const labelCol = dateCols[0] || stringCols[0] || columns[0];
+
+    // Add KPI cards for numeric columns (first 3)
+    for (const col of numericCols.slice(0, 3)) {
+      const values = data.map((r) => r[col]).filter((v) => typeof v === "number");
+      const sum = values.reduce((a, b) => a + b, 0);
+      const avg = values.length > 0 ? sum / values.length : 0;
+
+      instructions.push({
+        name: "KPICard",
+        props: {
+          title: `Total ${col}`,
+          value: sum >= 1000 ? `${(sum / 1000).toFixed(1)}K` : sum.toFixed(0),
+          trend: `Avg: ${avg.toFixed(1)}`,
+          color: ["blue", "green", "purple"][instructions.length % 3],
+          isPositive: true,
+        },
+      });
+    }
+
+    // Line chart if there's a date/label + numeric column
+    if (labelCol && numericCols.length > 0) {
+      const wantsLine = request.includes("trend") || request.includes("line") || request.includes("over time") || dateCols.length > 0;
+      if (wantsLine || !request.includes("bar")) {
+        instructions.push({
+          name: "LineChart",
+          props: {
+            title: `${numericCols[0]} over ${labelCol}`,
+            data: data,
+            xAxis: labelCol,
+            yAxis: numericCols[0],
+            color: "#3b82f6",
+          },
+        });
+      }
+    }
+
+    // Bar chart if there's a category + numeric column
+    if (stringCols.length > 0 && numericCols.length > 0) {
+      instructions.push({
+        name: "BarChart",
+        props: {
+          title: `${numericCols[0]} by ${stringCols[0]}`,
+          data: data,
+          xAxis: stringCols[0],
+          yAxis: numericCols[0],
+          color: "#06b6d4",
+        },
+      });
+    }
+
+    // Pie chart if there's a label + value column
+    if (stringCols.length > 0 && numericCols.length > 0) {
+      const wantsPie = request.includes("pie") || request.includes("share") || request.includes("distribution");
+      if (wantsPie || instructions.length < 4) {
+        const pieData = data.slice(0, 8).map((r) => ({
+          name: String(r[stringCols[0]]),
+          value: Number(r[numericCols[0]]) || 0,
+        }));
+        instructions.push({
+          name: "PieChart",
+          props: {
+            title: `${numericCols[0]} Distribution`,
+            data: pieData,
+          },
+        });
+      }
+    }
+
+    // Scatter plot if there are 2+ numeric columns
+    if (numericCols.length >= 2) {
+      const wantsScatter = request.includes("scatter") || request.includes("correlation") || request.includes("vs");
+      if (wantsScatter || instructions.length < 5) {
+        const scatterData = data.map((r) => ({
+          x: Number(r[numericCols[0]]) || 0,
+          y: Number(r[numericCols[1]]) || 0,
+        }));
+        instructions.push({
+          name: "ScatterPlot",
+          props: {
+            title: `${numericCols[0]} vs ${numericCols[1]}`,
+            data: scatterData,
+            xLabel: numericCols[0],
+            yLabel: numericCols[1],
+            color: "#f59e0b",
+          },
+        });
+      }
+    }
+
+    // Data table
+    instructions.push({
+      name: "DataTable",
+      props: {
+        title: `${name} Data`,
+        columns: columns.slice(0, 6),
+        data: data,
+      },
+    });
+
+    // Insights
+    instructions.push({
+      name: "TextBlock",
+      props: {
+        title: "Data Summary",
+        content: `Dataset "${name}" has ${data.length} rows and ${columns.length} columns. Numeric columns: ${numericCols.join(", ") || "none"}. Category columns: ${stringCols.join(", ") || "none"}.`,
+      },
+    });
+
+    return instructions;
   };
 
   /**
@@ -210,7 +341,7 @@ export const useTamboOrchestration = () => {
   /**
    * Process user request and orchestrate component rendering
    */
-  const orchestrateDashboard = useCallback(async (userRequest: string) => {
+  const orchestrateDashboard = useCallback(async (userRequest: string, dataset?: Dataset) => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
@@ -218,7 +349,7 @@ export const useTamboOrchestration = () => {
       await new Promise((resolve) => setTimeout(resolve, 800));
 
       // Analyze request and get component instructions
-      const instructions = analyzeRequest(userRequest);
+      const instructions = analyzeRequest(userRequest, dataset);
 
       if (instructions.length === 0) {
         setState((prev) => ({
@@ -247,7 +378,7 @@ export const useTamboOrchestration = () => {
         };
       }).filter((c): c is DashboardComponent => c !== null);
 
-      const explanation = generateExplanation(userRequest, components.length);
+      const explanation = generateExplanation(userRequest, components.length, dataset?.name);
 
       setState((prev) => ({
         ...prev,

@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { DataProvider } from "./contexts/DataContext";
 import Home from "./pages/Home";
 import { TamboProvider } from "@tambo-ai/react";
 import { tamboComponents } from "@/lib/tamboComponents";
@@ -38,7 +39,9 @@ function App() {
           <Toaster />
           {tamboApiKey ? (
             <TamboProvider apiKey={tamboApiKey} components={tamboComponents}>
-              <Router />
+              <DataProvider>
+                <Router />
+              </DataProvider>
             </TamboProvider>
           ) : (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-6">

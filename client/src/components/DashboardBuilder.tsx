@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useTamboOrchestration } from "@/hooks/useTamboOrchestration";
+import { useData } from "@/contexts/DataContext";
+import DataUpload from "@/components/DataUpload";
 import { motion } from "framer-motion";
 import { Send, Loader2, Trash2 } from "lucide-react";
 
@@ -15,6 +17,7 @@ import { Send, Loader2, Trash2 } from "lucide-react";
  */
 export default function DashboardBuilder() {
   const [input, setInput] = useState("");
+  const { activeDataset } = useData();
   const { components, loading, error, explanation, orchestrateDashboard, clearDashboard } =
     useTamboOrchestration();
   const [messages, setMessages] = useState<
@@ -37,8 +40,8 @@ export default function DashboardBuilder() {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
-    // Orchestrate dashboard
-    await orchestrateDashboard(input);
+    // Orchestrate dashboard with optional uploaded data
+    await orchestrateDashboard(input, activeDataset ?? undefined);
   };
 
   // Add AI response when components are generated
@@ -80,17 +83,20 @@ export default function DashboardBuilder() {
             <h1 className="text-2xl font-bold text-slate-900">Dashboard Builder</h1>
             <p className="text-sm text-slate-600">Powered by Tambo Generative UI</p>
           </div>
-          {(components.length > 0 || messages.length > 0) && (
-            <Button
-              onClick={handleClear}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <Trash2 className="w-4 h-4" />
-              Clear
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            <DataUpload />
+            {(components.length > 0 || messages.length > 0) && (
+              <Button
+                onClick={handleClear}
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                Clear
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -257,8 +263,14 @@ export default function DashboardBuilder() {
             </Button>
           </div>
           <p className="text-xs text-slate-500 mt-2">
-            💡 Tip: Describe what data you want to see, and the AI will render the right
-            components
+            {activeDataset ? (
+              <span className="flex items-center gap-1">
+                <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
+                Using dataset: <strong>{activeDataset.name}</strong> ({activeDataset.rowCount} rows)
+              </span>
+            ) : (
+              <>💡 Tip: Upload your own CSV/JSON data, or describe what you want to see</>
+            )}
           </p>
         </div>
       </div>
