@@ -1,356 +1,264 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Send, Loader2, RefreshCw } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useTamboThread, type TamboThreadMessage } from "@tambo-ai/react";
-
-function isContentPart(value: unknown): value is { type: string } {
-  return (
-    !!value &&
-    typeof value === "object" &&
-    "type" in value &&
-    typeof (value as { type?: unknown }).type === "string"
-  );
-}
-
-function contentToText(
-  content: TamboThreadMessage["content"] | undefined
-): string {
-  if (!content || content.length === 0) return "";
-
-  const parts = content
-    .map(part => {
-      if (!isContentPart(part)) return "";
-
-      switch (part.type) {
-        case "text": {
-          const text = (part as { text?: unknown }).text;
-          if (text == null) return "";
-          if (typeof text === "string") return text;
-          if (typeof text === "number" || typeof text === "boolean") {
-            return String(text);
-          }
-
-          if (import.meta.env.DEV) {
-            console.warn("Unexpected non-primitive text content", { text, part });
-          }
-          try {
-            return JSON.stringify(text);
-          } catch {
-            return "[unsupported text payload]";
-          }
-        }
-        case "image_url":
-          return "[image]";
-        default:
-          const label = `[${part.type} content not yet supported]`;
-          if (import.meta.env.DEV) {
-            console.warn("Unsupported message content part", part);
-          }
-          return label;
-      }
-    })
-    .filter(Boolean);
-
-  if (parts.length === 0) {
-    return "[unsupported message content]";
-  }
-
-  return parts.join(" ").trim();
-}
-
-function formatTimestamp(createdAt: string | number | Date | undefined) {
-  if (!createdAt) return "";
-
-  const date = createdAt instanceof Date ? createdAt : new Date(createdAt);
-  if (Number.isNaN(date.getTime())) {
-    if (import.meta.env.DEV) {
-      console.warn("Invalid message createdAt timestamp", { createdAt });
-    }
-    return "";
-  }
-
-  return date.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
+import { useTamboOrchestration } from "@/hooks/useTamboOrchestration";
+import { motion } from "framer-motion";
+import { Send, Loader2, Trash2 } from "lucide-react";
 
 /**
-* DashboardBuilder Component
-* Main interface for AI-powered dashboard generation.
-*/
+ * Dashboard Builder Component
+ * Integrates Tambo AI orchestration for dynamic component rendering
+ * 
+ * Design Philosophy: Modern Minimalist with AI Accent
+ * - Chat interface for natural language input
+ * - Real-time component rendering based on AI decisions
+ * - Smooth animations and transitions
+ */
 export default function DashboardBuilder() {
   const [input, setInput] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false);
+  const { components, loading, error, explanation, orchestrateDashboard, clearDashboard } =
+    useTamboOrchestration();
+  const [messages, setMessages] = useState<
+    Array<{ type: "user" | "ai"; content: string; timestamp: string }>
+  >([]);
 
-  const {
-    thread,
-    sendThreadMessage,
-    startNewThread,
-    isIdle,
-    generationStatusMessage,
-  } = useTamboThread();
+  const handleGenerate = async () => {
+    if (!input.trim()) return;
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
+    // Add user message
+    const userMessage = {
+      type: "user" as const,
+      content: input,
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
 
-    const trimmed = input.trim();
-    if (!trimmed) return;
-    if (!isIdle) {
-      setError("Please wait for the current dashboard generation to finish.");
-      return;
-    }
-
-    setError(null);
-    try {
-      await sendThreadMessage(trimmed);
-      setInput("");
-    } catch (err) {
-      if (import.meta.env.DEV) {
-        console.error("Failed to send Tambo message", err);
-      }
-      const status = (err as any)?.status ?? (err as any)?.response?.status;
-      if (status === 401 || status === 403) {
-        setError(
-          "Your Tambo API key appears invalid or unauthorized. Please check VITE_TAMBO_API_KEY."
-        );
-      } else {
-        setError(
-          "Failed to send message. This may be a temporary issue with the Tambo service. Please try again."
-        );
-      }
-    }
-  };
-
-  const clearConversation = () => {
-    startNewThread();
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    setError(null);
+
+    // Orchestrate dashboard
+    await orchestrateDashboard(input);
   };
 
-  const handleRefresh = () => {
-    if (!isIdle) return;
-    if (thread.messages.length === 0) {
-      clearConversation();
-      return;
+  // Add AI response when components are generated
+  if (components.length > 0 && messages.length > 0 && !loading) {
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage.type === "user") {
+      const aiMessage = {
+        type: "ai" as const,
+        content: explanation,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      };
+
+      setMessages((prev) => [...prev, aiMessage]);
     }
+  }
 
-    setIsClearConfirmOpen(true);
+  const handleClear = () => {
+    clearDashboard();
+    setMessages([]);
+    setInput("");
   };
 
-  const messages = thread.messages;
-  const isLoading = !isIdle;
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleGenerate();
+    }
+  };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="border-b border-slate-200 bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">
-                Dashboard Builder
-              </h1>
-              <p className="text-sm text-slate-600">
-                Powered by Tambo Generative UI
-              </p>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col">
+      {/* Header */}
+      <div className="bg-white border-b border-slate-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Dashboard Builder</h1>
+            <p className="text-sm text-slate-600">Powered by Tambo Generative UI</p>
+          </div>
+          {(components.length > 0 || messages.length > 0) && (
             <Button
-              onClick={handleRefresh}
+              onClick={handleClear}
               variant="outline"
               size="sm"
-              className="gap-2"
-              disabled={!isIdle}
+              className="flex items-center gap-2"
             >
-              <RefreshCw className="w-4 h-4" />
+              <Trash2 className="w-4 h-4" />
               Clear
             </Button>
-          </div>
+          )}
         </div>
       </div>
 
-      <AlertDialog open={isClearConfirmOpen} onOpenChange={setIsClearConfirmOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Clear dashboard?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will clear the current conversation and start a new dashboard.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              disabled={!isIdle}
-              onClick={() => {
-                if (!isIdle) return;
-                clearConversation();
-                setIsClearConfirmOpen(false);
-              }}
-            >
-              Clear
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
+      {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          {messages.length === 0 ? (
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          {/* Welcome State */}
+          {messages.length === 0 && components.length === 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-center py-12"
+              transition={{ duration: 0.5 }}
+              className="max-w-2xl mx-auto"
             >
-              <div className="inline-block p-6 bg-gradient-to-br from-indigo-50 to-cyan-50 rounded-lg border-2 border-indigo-100">
-                <h2 className="text-2xl font-bold text-slate-900 mb-3">
+              <div className="bg-white rounded-lg border border-slate-200 p-8 text-center shadow-sm">
+                <h2 className="text-2xl font-bold text-slate-900 mb-4">
                   Welcome to Dashboard Builder
                 </h2>
-                <p className="text-slate-600 max-w-md mb-6">
-                  Describe the dashboard you want to create in natural language.
-                  Tambo will automatically generate the right components for you.
+                <p className="text-slate-600 mb-6">
+                  Describe the dashboard you want to create in natural language. Tambo will
+                  automatically generate the right components for you.
                 </p>
-                <div className="space-y-2 text-sm text-slate-700">
-                  <p className="font-semibold">Try asking for:</p>
-                  <ul className="space-y-1">
-                    <li>📊 "Show me sales by region with revenue trends"</li>
-                    <li>📈 "Create a user growth dashboard"</li>
-                    <li>🔗 "Analyze revenue vs customer correlation"</li>
-                  </ul>
+                <div className="space-y-3 text-left bg-slate-50 rounded-lg p-6 mb-6">
+                  <p className="text-sm font-semibold text-slate-700 mb-3">Try asking for:</p>
+                  <div className="space-y-2">
+                    <p className="text-sm text-slate-600 flex items-center gap-2">
+                      <span className="text-xl">📊</span> "Show me sales by region with revenue
+                      trends"
+                    </p>
+                    <p className="text-sm text-slate-600 flex items-center gap-2">
+                      <span className="text-xl">📈</span> "Create a user growth dashboard"
+                    </p>
+                    <p className="text-sm text-slate-600 flex items-center gap-2">
+                      <span className="text-xl">🔗</span> "Analyze revenue vs customer correlation"
+                    </p>
+                  </div>
                 </div>
               </div>
             </motion.div>
-          ) : (
-            <div className="space-y-6">
-              <AnimatePresence>
-                {messages.map(message => {
-                  const text = contentToText(message.content);
-                  const timestamp = formatTimestamp(message.createdAt);
+          )}
 
-                  if (!text && !message.renderedComponent) {
-                    return (
-                      <motion.div
-                        key={message.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="text-xs text-slate-500 italic"
-                      >
-                        [This message contains content types the app doesn’t support
-                        yet.]
-                      </motion.div>
-                    );
-                  }
-
-                  return (
-                    <motion.div
-                      key={message.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                    >
-                      {message.role === "user" ? (
-                        <div className="flex justify-end mb-4">
-                          <div className="bg-indigo-600 text-white rounded-lg rounded-br-none px-4 py-3 max-w-md">
-                            <p className="text-sm">{text}</p>
-                            {timestamp ? (
-                              <span className="text-xs text-indigo-100 mt-2 block">
-                                {timestamp}
-                              </span>
-                            ) : null}
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="space-y-4">
-                          {text ? (
-                            <div className="bg-white border-2 border-slate-200 rounded-lg rounded-bl-none px-4 py-3 max-w-2xl">
-                              <p className="text-sm text-slate-700">{text}</p>
-                              {timestamp ? (
-                                <span className="text-xs text-slate-500 mt-2 block">
-                                  {timestamp}
-                                </span>
-                              ) : null}
-                            </div>
-                          ) : null}
-
-                          {message.renderedComponent ? (
-                            <motion.div
-                              initial={{ opacity: 0, scale: 0.98 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              transition={{ duration: 0.2 }}
-                            >
-                              {message.renderedComponent}
-                            </motion.div>
-                          ) : null}
-                        </div>
-                      )}
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
-
-              {isLoading ? (
+          {/* Chat Messages */}
+          {messages.length > 0 && (
+            <div className="space-y-4 mb-8">
+              {messages.map((msg, idx) => (
                 <motion.div
+                  key={idx}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex justify-start"
+                  transition={{ delay: idx * 0.1 }}
+                  className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}
                 >
-                  <div className="bg-white border-2 border-slate-200 rounded-lg rounded-bl-none px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin text-cyan-500" />
-                      <span className="text-sm text-slate-600">
-                        {generationStatusMessage || "Generating dashboard..."}
-                      </span>
-                    </div>
+                  <div
+                    className={`max-w-md px-4 py-3 rounded-lg ${
+                      msg.type === "user"
+                        ? "bg-indigo-600 text-white rounded-br-none"
+                        : "bg-slate-100 text-slate-900 rounded-bl-none"
+                    }`}
+                  >
+                    <p className="text-sm">{msg.content}</p>
+                    <p
+                      className={`text-xs mt-1 ${
+                        msg.type === "user" ? "text-indigo-200" : "text-slate-500"
+                      }`}
+                    >
+                      {msg.timestamp}
+                    </p>
                   </div>
                 </motion.div>
-              ) : null}
+              ))}
+            </div>
+          )}
+
+          {/* Loading State */}
+          {loading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex justify-center py-8"
+            >
+              <div className="text-center">
+                <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mx-auto mb-3" />
+                <p className="text-sm text-slate-600">Generating dashboard...</p>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"
+            >
+              <p className="text-sm text-red-700">{error}</p>
+            </motion.div>
+          )}
+
+          {/* Dashboard Components Grid */}
+          {components.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ staggerChildren: 0.1 }}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+            >
+              {components.map((item: any, idx: number) => {
+                const Component = item.component;
+                return (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    {Component && <Component {...item.instruction.props} />}
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          )}
+
+          {/* Tip */}
+          {components.length === 0 && messages.length === 0 && (
+            <div className="max-w-2xl mx-auto mt-8 text-center">
+              <p className="text-xs text-slate-500 flex items-center justify-center gap-2">
+                <span>💡</span> Tip: Describe what data you want to see, and the AI will render
+                the right components
+              </p>
             </div>
           )}
         </div>
       </div>
 
-      <div className="border-t border-slate-200 bg-white shadow-lg sticky bottom-0">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          {error ? (
-            <div className="mb-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-md px-3 py-2">
-              {error}
-            </div>
-          ) : null}
-          <form onSubmit={handleSendMessage} className="flex gap-3">
-            <Input
+      {/* Input Area */}
+      <div className="bg-white border-t border-slate-200 shadow-lg">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex gap-3">
+            <input
+              type="text"
               value={input}
-              onChange={e => setInput(e.target.value)}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={handleKeyPress}
               placeholder="Describe your dashboard (e.g., 'Show me sales by region with revenue trends')..."
-              disabled={!isIdle}
-              className="flex-1 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
+              className="flex-1 px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
             />
             <Button
-              type="submit"
-              disabled={!isIdle || !input.trim()}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2"
+              onClick={handleGenerate}
+              disabled={!input.trim() || loading}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 flex items-center gap-2"
             >
-              {isLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Generating</span>
+                </>
               ) : (
-                <Send className="w-4 h-4" />
+                <>
+                  <Send className="w-4 h-4" />
+                  <span>Generate</span>
+                </>
               )}
-              <span className="hidden sm:inline">Generate</span>
             </Button>
-          </form>
+          </div>
           <p className="text-xs text-slate-500 mt-2">
-            💡 Tip: Ask for goals, comparisons, and insights (not just charts)
+            💡 Tip: Describe what data you want to see, and the AI will render the right
+            components
           </p>
         </div>
       </div>
