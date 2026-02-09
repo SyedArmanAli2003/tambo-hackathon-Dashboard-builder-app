@@ -22,22 +22,33 @@ interface PieChartProps {
  * Handles: [{name,value}], [{label,count}], [{Region, Revenue}], etc.
  */
 function normalizePieData(data: Array<Record<string, any>>): Array<{ name: string; value: number }> {
-  if (!data || data.length === 0) return [];
+  if (!data || !Array.isArray(data) || data.length === 0) return [];
 
-  // If already has name+value, just coerce types
-  const keys = Object.keys(data[0]);
-  const nameKey = keys.find(k => /^(name|label|category|group|segment)$/i.test(k)) ?? keys.find(k => typeof data[0][k] === "string" && isNaN(Number(data[0][k])));
-  const valueKey = keys.find(k => /^(value|count|total|amount|sum|revenue|sales|profit)$/i.test(k)) ?? keys.find(k => {
-    const v = data[0][k];
-    return typeof v === "number" || (typeof v === "string" && !isNaN(Number(v)) && v !== "");
-  });
+  try {
+    const keys = Object.keys(data[0] ?? {});
+    if (keys.length === 0) return [];
 
-  if (!nameKey || !valueKey) return data as any;
+    const nameKey = keys.find(k => /^(name|label|category|group|segment)$/i.test(k)) ?? keys.find(k => {
+      const v = data[0]?.[k];
+      return typeof v === "string" && isNaN(Number(v));
+    });
+    const valueKey = keys.find(k => /^(value|count|total|amount|sum|revenue|sales|profit)$/i.test(k)) ?? keys.find(k => {
+      const v = data[0]?.[k];
+      return typeof v === "number" || (typeof v === "string" && !isNaN(Number(v)) && v !== "");
+    });
 
-  return data.map(row => ({
-    name: String(row[nameKey] ?? "Unknown"),
-    value: typeof row[valueKey] === "number" ? row[valueKey] : Number(row[valueKey]) || 0,
-  })).filter(d => d.value > 0);
+    if (!nameKey || !valueKey) return data.slice(0, 10).map((row, i) => ({ name: `Item ${i + 1}`, value: 1 }));
+
+    return data
+      .filter(row => row != null && typeof row === "object")
+      .map(row => ({
+        name: String(row[nameKey] ?? "Unknown"),
+        value: typeof row[valueKey] === "number" ? row[valueKey] : Number(row[valueKey]) || 0,
+      }))
+      .filter(d => d.value > 0);
+  } catch {
+    return [];
+  }
 }
 
 /**
@@ -50,9 +61,20 @@ export default function PieChart({
   data,
   height = 300,
 }: PieChartProps) {
-  const isDemoFallback = typeof data === "undefined" || !Array.isArray(data) || data.length === 0;
-  const rawData = isDemoFallback ? marketShareData : data;
+  const isDemoFallback = !data || !Array.isArray(data) || data.length === 0;
+  const rawData = isDemoFallback ? marketShareData : data.filter(row => row != null && typeof row === "object");
   const finalData = normalizePieData(rawData as any);
+
+  if (finalData.length === 0 && !isDemoFallback) {
+    return (
+      <Card className="p-6 border-2 border-slate-200">
+        <h3 className="text-lg font-bold text-slate-900">{title}</h3>
+        <div className="flex items-center justify-center text-xs text-slate-500" style={{ height }}>
+          No data available
+        </div>
+      </Card>
+    );
+  }
 
   const COLORS = [
     "#4F46E5", // indigo

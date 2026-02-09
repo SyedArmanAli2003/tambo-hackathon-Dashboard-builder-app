@@ -35,23 +35,37 @@ export default function BarChart({
   color = "#06B6D4",
   height = 300,
 }: BarChartProps) {
-  const isDemoFallback = typeof data === "undefined" || !Array.isArray(data) || data.length === 0;
-  const rawData = isDemoFallback ? regionSalesData : data;
+  // Safely determine if we should use demo data
+  const isDemoFallback = !data || !Array.isArray(data) || data.length === 0;
+  const rawData = isDemoFallback ? regionSalesData : data.filter(row => row != null && typeof row === "object");
 
-  // Auto-detect keys from data if xAxis/yAxis don't match
-  const dataKeys = rawData.length > 0 ? Object.keys(rawData[0]) : [];
-  const findKey = (preferred: string, fallbackType: "string" | "number") => {
-    if (preferred && dataKeys.some(k => k.toLowerCase() === preferred.toLowerCase())) {
-      return dataKeys.find(k => k.toLowerCase() === preferred.toLowerCase())!;
-    }
+  // Guard: if nothing valid after filtering
+  if (rawData.length === 0) {
+    return (
+      <Card className="p-6 border-2 border-slate-200">
+        <h3 className="text-lg font-bold text-slate-900">{title}</h3>
+        <div className="flex items-center justify-center text-xs text-slate-500" style={{ height }}>
+          No data available
+        </div>
+      </Card>
+    );
+  }
+
+  // Auto-detect keys from data
+  const dataKeys = Object.keys(rawData[0] ?? {});
+  const findKey = (preferred: string, fallbackType: "string" | "number"): string => {
+    // Exact case-insensitive match
+    const exactMatch = dataKeys.find(k => k.toLowerCase() === preferred.toLowerCase());
+    if (exactMatch) return exactMatch;
     // Fallback: find first key of the right type
-    if (rawData.length > 0) {
-      const sample = rawData[0];
-      return dataKeys.find(k => {
+    const sample = rawData[0];
+    if (sample) {
+      const found = dataKeys.find(k => {
         const v = sample[k];
-        if (fallbackType === "number") return typeof v === "number" || (!isNaN(Number(v)) && v !== "" && v !== null);
+        if (fallbackType === "number") return typeof v === "number" || (v != null && v !== "" && !isNaN(Number(v)));
         return typeof v === "string" && isNaN(Number(v));
-      }) ?? preferred;
+      });
+      if (found) return found;
     }
     return preferred;
   };
@@ -62,10 +76,14 @@ export default function BarChart({
   // Coerce string numbers to actual numbers and filter valid rows
   const cleanedData = rawData
     .map((row) => {
-      const val = row[finalYAxis];
-      const numVal = typeof val === "number" ? val : Number(val);
-      if (isNaN(numVal)) return null;
-      return { ...row, [finalYAxis]: numVal };
+      try {
+        const val = row?.[finalYAxis];
+        const numVal = typeof val === "number" ? val : Number(val);
+        if (isNaN(numVal)) return null;
+        return { ...row, [finalYAxis]: numVal };
+      } catch {
+        return null;
+      }
     })
     .filter(Boolean) as Record<string, any>[];
 

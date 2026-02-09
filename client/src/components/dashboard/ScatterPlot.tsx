@@ -36,31 +36,40 @@ type ScatterPlotPoint = { x: number; y: number } & Record<
  * Normalize scatter data: accepts [{x,y}] or any [{col1, col2}] format.
  */
 function normalizeScatterData(data: any[]): ScatterPlotPoint[] {
-  if (!data || data.length === 0) return [];
-  const keys = Object.keys(data[0]);
+  if (!data || !Array.isArray(data) || data.length === 0) return [];
 
-  // Already has x and y
-  if (keys.includes("x") && keys.includes("y")) {
-    return data.map(row => ({
-      x: typeof row.x === "number" ? row.x : Number(row.x) || 0,
-      y: typeof row.y === "number" ? row.y : Number(row.y) || 0,
-    }));
+  try {
+    // Filter out null/undefined entries
+    const validData = data.filter(row => row != null && typeof row === "object");
+    if (validData.length === 0) return [];
+
+    const keys = Object.keys(validData[0] ?? {});
+
+    // Already has x and y
+    if (keys.includes("x") && keys.includes("y")) {
+      return validData.map(row => ({
+        x: typeof row.x === "number" ? row.x : Number(row.x) || 0,
+        y: typeof row.y === "number" ? row.y : Number(row.y) || 0,
+      }));
+    }
+
+    // Find two numeric columns
+    const numericKeys = keys.filter(k => {
+      const v = validData[0]?.[k];
+      return typeof v === "number" || (typeof v === "string" && !isNaN(Number(v)) && v !== "");
+    });
+
+    if (numericKeys.length >= 2) {
+      return validData.map(row => ({
+        x: Number(row[numericKeys[0]]) || 0,
+        y: Number(row[numericKeys[1]]) || 0,
+      }));
+    }
+  } catch {
+    // Fall through to return empty
   }
 
-  // Find two numeric columns
-  const numericKeys = keys.filter(k => {
-    const v = data[0][k];
-    return typeof v === "number" || (typeof v === "string" && !isNaN(Number(v)) && v !== "");
-  });
-
-  if (numericKeys.length >= 2) {
-    return data.map(row => ({
-      x: Number(row[numericKeys[0]]) || 0,
-      y: Number(row[numericKeys[1]]) || 0,
-    }));
-  }
-
-  return data as ScatterPlotPoint[];
+  return [];
 }
 
 export default function ScatterPlot({
@@ -71,11 +80,22 @@ export default function ScatterPlot({
   color = "#8B5CF6",
   height = 300,
 }: ScatterPlotProps) {
-  const isDemoFallback = typeof data === "undefined" || !Array.isArray(data) || data.length === 0;
+  const isDemoFallback = !data || !Array.isArray(data) || data.length === 0;
   const rawData = isDemoFallback
     ? revenueVsCustomersData.map((d) => ({ x: d.customers, y: d.revenue }))
     : data;
   const finalData = normalizeScatterData(rawData);
+
+  if (finalData.length === 0 && !isDemoFallback) {
+    return (
+      <Card className="p-6 border-2 border-slate-200">
+        <h3 className="text-lg font-bold text-slate-900">{title}</h3>
+        <div className="flex items-center justify-center text-xs text-slate-500" style={{ height }}>
+          No data available
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <motion.div

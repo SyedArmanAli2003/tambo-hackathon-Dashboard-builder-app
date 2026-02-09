@@ -2,15 +2,46 @@ import { Button } from "@/components/ui/button";
 import { useData } from "@/contexts/DataContext";
 import DataUpload from "@/components/DataUpload";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Loader2, Trash2, Sparkles } from "lucide-react";
+import { Send, Loader2, Trash2, Sparkles, AlertTriangle } from "lucide-react";
 import { useTamboThread, useTamboThreadInput } from "@tambo-ai/react";
-import { useMemo } from "react";
+import { useMemo, Component, type ReactNode } from "react";
 import {
   analyzeDataset,
   buildAnalysisSummaryText,
   findRelevantAggregation,
   type DataSummary,
 } from "@/lib/dataAnalysis";
+
+/**
+ * Inline error boundary that catches crashes in AI-rendered components
+ * so one bad component doesn't kill the entire app.
+ */
+class ComponentErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-red-800">Component failed to render</p>
+            <p className="text-xs text-red-600 mt-1">{this.state.error?.message || "Unknown error"}</p>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 /**
  * Dashboard Builder Component
@@ -247,7 +278,9 @@ RULES:
                     {/* AI-rendered component */}
                     {msg.renderedComponent && (
                       <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
-                        {msg.renderedComponent}
+                        <ComponentErrorBoundary>
+                          {msg.renderedComponent}
+                        </ComponentErrorBoundary>
                       </div>
                     )}
                   </motion.div>

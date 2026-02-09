@@ -35,22 +35,34 @@ export default function LineChart({
   color = "#4F46E5",
   height = 300,
 }: LineChartProps) {
-  const isDemoFallback = typeof data === "undefined" || !Array.isArray(data) || data.length === 0;
-  const rawData = isDemoFallback ? salesData : data;
+  // Safely determine if we should use demo data
+  const isDemoFallback = !data || !Array.isArray(data) || data.length === 0;
+  const rawData = isDemoFallback ? salesData : data.filter(row => row != null && typeof row === "object");
 
-  // Auto-detect keys from data if xAxis/yAxis don't match
-  const dataKeys = rawData.length > 0 ? Object.keys(rawData[0]) : [];
-  const findKey = (preferred: string, fallbackType: "string" | "number") => {
-    if (preferred && dataKeys.some(k => k.toLowerCase() === preferred.toLowerCase())) {
-      return dataKeys.find(k => k.toLowerCase() === preferred.toLowerCase())!;
-    }
-    if (rawData.length > 0) {
-      const sample = rawData[0];
-      return dataKeys.find(k => {
+  if (rawData.length === 0) {
+    return (
+      <Card className="p-6 border-2 border-slate-200">
+        <h3 className="text-lg font-bold text-slate-900">{title}</h3>
+        <div className="flex items-center justify-center text-xs text-slate-500" style={{ height }}>
+          No data available
+        </div>
+      </Card>
+    );
+  }
+
+  // Auto-detect keys from data
+  const dataKeys = Object.keys(rawData[0] ?? {});
+  const findKey = (preferred: string, fallbackType: "string" | "number"): string => {
+    const exactMatch = dataKeys.find(k => k.toLowerCase() === preferred.toLowerCase());
+    if (exactMatch) return exactMatch;
+    const sample = rawData[0];
+    if (sample) {
+      const found = dataKeys.find(k => {
         const v = sample[k];
-        if (fallbackType === "number") return typeof v === "number" || (!isNaN(Number(v)) && v !== "" && v !== null);
+        if (fallbackType === "number") return typeof v === "number" || (v != null && v !== "" && !isNaN(Number(v)));
         return typeof v === "string" && isNaN(Number(v));
-      }) ?? preferred;
+      });
+      if (found) return found;
     }
     return preferred;
   };
@@ -61,10 +73,14 @@ export default function LineChart({
   // Coerce string numbers to actual numbers and filter valid rows
   const cleanedData = rawData
     .map((row) => {
-      const val = row[finalYAxis];
-      const numVal = typeof val === "number" ? val : Number(val);
-      if (isNaN(numVal)) return null;
-      return { ...row, [finalYAxis]: numVal };
+      try {
+        const val = row?.[finalYAxis];
+        const numVal = typeof val === "number" ? val : Number(val);
+        if (isNaN(numVal)) return null;
+        return { ...row, [finalYAxis]: numVal };
+      } catch {
+        return null;
+      }
     })
     .filter(Boolean) as Record<string, any>[];
 
