@@ -29,12 +29,12 @@ export default function StatCard({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="p-4 border-2 border-slate-200 bg-white hover:shadow-md transition-shadow">
-        <p className="text-xs font-medium text-slate-600 mb-2 uppercase tracking-wider">
+      <Card className="p-4 border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/60 hover:shadow-md transition-shadow">
+        <p className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-2 uppercase tracking-wider">
           {label}
         </p>
         <div className="flex items-end justify-between">
-          <h4 className="text-2xl font-bold text-slate-900">{value}</h4>
+          <h4 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{value}</h4>
           {change && (
             <div
               className={`flex items-center gap-1 text-xs font-semibold ${

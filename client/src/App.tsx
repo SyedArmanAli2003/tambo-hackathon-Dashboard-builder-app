@@ -35,10 +35,7 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultPreference="system">
         <TooltipProvider>
           <Toaster />
           {tamboApiKey ? (
@@ -51,21 +48,21 @@ function App() {
               </DataProvider>
             </TamboProvider>
           ) : (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-6">
-              <div className="max-w-lg w-full bg-white border-2 border-slate-200 rounded-lg p-6 shadow-sm">
-                <h1 className="text-xl font-bold text-slate-900">
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-6">
+              <div className="max-w-lg w-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-lg p-6 shadow-sm">
+                <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
                   AI features are not configured
                 </h1>
-                <p className="text-sm text-slate-600 mt-2">
+                <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
                   This app requires a Tambo API key to generate dashboards.
                 </p>
                 {isDev ? (
                   <>
-                    <p className="text-sm text-slate-600 mt-2">
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
                       Set <span className="font-mono">VITE_TAMBO_API_KEY</span> in your
                       <span className="font-mono"> .env</span> file or environment.
                     </p>
-                    <pre className="mt-4 text-xs bg-slate-50 border border-slate-200 rounded-md p-3 overflow-auto">
+                    <pre className="mt-4 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md p-3 overflow-auto text-slate-800 dark:text-slate-300">
 VITE_TAMBO_API_KEY=your_key_here
                     </pre>
                     <p className="text-sm text-slate-600 mt-3">

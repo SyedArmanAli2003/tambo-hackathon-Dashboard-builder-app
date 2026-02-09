@@ -109,11 +109,11 @@ export default function LineChart({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.1 }}
     >
-      <Card className="p-6 border-2 border-slate-200 hover:shadow-lg transition-shadow">
+      <Card className="p-6 border-2 border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
         <div className="flex items-center justify-between gap-3 mb-2">
-          <h3 className="text-lg font-bold text-slate-900">{title}</h3>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">{title}</h3>
           {isDemoFallback ? (
-            <span className="text-xs px-2 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200">
+            <span className="text-xs px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
               Demo data
             </span>
           ) : null}

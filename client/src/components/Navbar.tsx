@@ -1,9 +1,10 @@
 import { useLocation } from "wouter";
-import { BookOpen, LayoutDashboard, Trash2 } from "lucide-react";
+import { BookOpen, LayoutDashboard, Trash2, Sun, Moon, Monitor } from "lucide-react";
 import DataUpload from "@/components/DataUpload";
 import ExportButton from "@/components/ExportButton";
 import { useData } from "@/contexts/DataContext";
 import { useDashboardNav } from "@/contexts/DashboardNavContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -13,6 +14,7 @@ export default function Navbar() {
   const [location, setLocation] = useLocation();
   const { activeDataset } = useData();
   const { state: dashState } = useDashboardNav();
+  const { preference, cycleTheme } = useTheme();
 
   const links = [
     { href: "/", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
@@ -21,8 +23,17 @@ export default function Navbar() {
 
   const isHome = location === "/";
 
+  const themeIcon =
+    preference === "light" ? <Sun className="w-4 h-4" /> :
+    preference === "dark" ? <Moon className="w-4 h-4" /> :
+    <Monitor className="w-4 h-4" />;
+
+  const themeLabel =
+    preference === "light" ? "Light" :
+    preference === "dark" ? "Dark" : "System";
+
   return (
-    <nav className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
+    <nav className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-700/60 shadow-sm sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-14">
           {/* Logo */}
@@ -33,7 +44,7 @@ export default function Navbar() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
               <LayoutDashboard className="w-4 h-4 text-white" />
             </div>
-            <span className="text-lg font-bold text-slate-900 hidden sm:inline">
+            <span className="text-lg font-bold text-slate-900 dark:text-slate-100 hidden sm:inline">
               Dashboard Builder
             </span>
           </button>
@@ -51,8 +62,8 @@ export default function Navbar() {
                   onClick={() => setLocation(link.href)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     isActive
-                      ? "bg-indigo-50 text-indigo-700"
-                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                      ? "bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300"
+                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200"
                   }`}
                 >
                   {link.icon}
@@ -64,7 +75,7 @@ export default function Navbar() {
             {/* Dashboard actions */}
             {isHome && (
               <>
-                <div className="w-px h-6 bg-slate-200 mx-2" />
+                <div className="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-2" />
                 <DataUpload />
                 {dashState?.hasMessages && (
                   <>
@@ -85,15 +96,26 @@ export default function Navbar() {
                 )}
               </>
             )}
+
+            {/* Theme Toggle */}
+            <div className="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-2" />
+            <button
+              onClick={cycleTheme}
+              title={`Theme: ${themeLabel}`}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"
+            >
+              {themeIcon}
+              <span className="hidden sm:inline text-xs">{themeLabel}</span>
+            </button>
           </div>
         </div>
       </div>
 
       {/* Dataset info strip */}
       {isHome && activeDataset && (
-        <div className="bg-slate-50 border-t border-slate-100">
+        <div className="bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-700/40">
           <div className="max-w-7xl mx-auto px-6 py-1.5">
-            <p className="text-xs text-slate-600 flex items-center gap-1">
+            <p className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1">
               <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
               Dataset: <strong>{activeDataset.name}</strong> ({activeDataset.rowCount} rows, {activeDataset.columns.length} cols)
             </p>

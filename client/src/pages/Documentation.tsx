@@ -78,7 +78,7 @@ const fadeIn = {
 
 export default function Documentation() {
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
       <div className="max-w-5xl mx-auto px-6 py-10 space-y-12">
         {/* Hero */}
         <motion.section {...fadeIn}>
@@ -104,51 +104,51 @@ export default function Documentation() {
 
         {/* Getting Started */}
         <motion.section {...fadeIn} transition={{ delay: 0.1 }}>
-          <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
             <Zap className="w-5 h-5 text-amber-500" />
             Getting Started
           </h2>
           <div className="grid md:grid-cols-3 gap-4">
-            <Card className="p-5 border-2 border-slate-200 hover:shadow-md transition-shadow">
+            <Card className="p-5 border-2 border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">1</div>
-                <h3 className="font-semibold text-slate-900">Upload Your Data</h3>
+                <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-sm">1</div>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100">Upload Your Data</h3>
               </div>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-slate-600 dark:text-slate-400">
                 Click <strong>"Upload Data"</strong> to import a CSV or JSON file. The app auto-detects
                 columns, data types, and computes statistics.
               </p>
-              <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+              <div className="mt-3 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-500">
                 <Upload className="w-3.5 h-3.5" />
                 Supports CSV & JSON
               </div>
             </Card>
 
-            <Card className="p-5 border-2 border-slate-200 hover:shadow-md transition-shadow">
+            <Card className="p-5 border-2 border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">2</div>
-                <h3 className="font-semibold text-slate-900">Ask a Question</h3>
+                <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-sm">2</div>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100">Ask a Question</h3>
               </div>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-slate-600 dark:text-slate-400">
                 Type what you want to see in plain English. The AI understands your intent
                 and picks the best visualization.
               </p>
-              <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+              <div className="mt-3 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-500">
                 <MessageSquare className="w-3.5 h-3.5" />
                 Natural language input
               </div>
             </Card>
 
-            <Card className="p-5 border-2 border-slate-200 hover:shadow-md transition-shadow">
+            <Card className="p-5 border-2 border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">3</div>
-                <h3 className="font-semibold text-slate-900">Export & Share</h3>
+                <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-sm">3</div>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100">Export & Share</h3>
               </div>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-slate-600 dark:text-slate-400">
                 Once your dashboard is generated, click <strong>"Export"</strong> to
                 download as PDF, JPG, or PNG and share with your team.
               </p>
-              <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+              <div className="mt-3 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-500">
                 <Download className="w-3.5 h-3.5" />
                 PDF, JPG, PNG formats
               </div>
@@ -158,11 +158,11 @@ export default function Documentation() {
 
         {/* Example Prompts */}
         <motion.section {...fadeIn} transition={{ delay: 0.15 }}>
-          <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
             <MessageSquare className="w-5 h-5 text-indigo-500" />
             Example Prompts
           </h2>
-          <Card className="p-6 border-2 border-slate-200">
+          <Card className="p-6 border-2 border-slate-200 dark:border-slate-700">
             <div className="grid md:grid-cols-2 gap-4">
               {[
                 { prompt: "Show me sales by region with revenue trends", desc: "Generates bar chart + line chart" },
@@ -176,12 +176,12 @@ export default function Documentation() {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-start gap-3 p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors"
+                  className="flex items-start gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors"
                 >
                   <span className="text-indigo-500 mt-0.5 font-mono text-xs">→</span>
                   <div>
-                    <p className="text-sm font-medium text-slate-800">"{item.prompt}"</p>
-                    <p className="text-xs text-slate-500 mt-0.5">{item.desc}</p>
+                    <p className="text-sm font-medium text-slate-800 dark:text-slate-200">"{item.prompt}"</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-500 mt-0.5">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -191,11 +191,11 @@ export default function Documentation() {
 
         {/* Components */}
         <motion.section {...fadeIn} transition={{ delay: 0.2 }}>
-          <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
             <Layers className="w-5 h-5 text-purple-500" />
             Available Components
           </h2>
-          <p className="text-sm text-slate-600 mb-4">
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
             The AI automatically selects from these 8 dashboard components based on your request:
           </p>
           <div className="grid md:grid-cols-2 gap-4">
@@ -206,13 +206,13 @@ export default function Documentation() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.05 * i }}
               >
-                <Card className="p-5 border-2 border-slate-200 hover:shadow-md hover:border-indigo-200 transition-all">
+                <Card className="p-5 border-2 border-slate-200 dark:border-slate-700 hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-500/40 transition-all">
                   <div className="flex items-center gap-3 mb-2">
                     {comp.icon}
-                    <h3 className="font-semibold text-slate-900">{comp.name}</h3>
+                    <h3 className="font-semibold text-slate-900 dark:text-slate-100">{comp.name}</h3>
                   </div>
-                  <p className="text-sm text-slate-600 mb-2">{comp.description}</p>
-                  <p className="text-xs text-indigo-600 bg-indigo-50 rounded px-2 py-1 inline-block">
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">{comp.description}</p>
+                  <p className="text-xs text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 rounded px-2 py-1 inline-block">
                     Try: {comp.example}
                   </p>
                 </Card>
@@ -223,38 +223,38 @@ export default function Documentation() {
 
         {/* Architecture */}
         <motion.section {...fadeIn} transition={{ delay: 0.25 }}>
-          <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
             <Code2 className="w-5 h-5 text-emerald-500" />
             Architecture
           </h2>
-          <Card className="p-6 border-2 border-slate-200">
+          <Card className="p-6 border-2 border-slate-200 dark:border-slate-700">
             <div className="space-y-6">
               <div>
-                <h3 className="font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                  <Cpu className="w-4 h-4 text-slate-500" />
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2 flex items-center gap-2">
+                  <Cpu className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                   How It Works
                 </h3>
-                <div className="bg-slate-50 rounded-lg p-4">
+                <div className="bg-slate-50 dark:bg-slate-800/60 rounded-lg p-4">
                   <div className="flex flex-col sm:flex-row items-center gap-2 text-sm text-center">
-                    <span className="px-3 py-2 bg-indigo-100 text-indigo-700 rounded-lg font-medium whitespace-nowrap">User Prompt</span>
+                    <span className="px-3 py-2 bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 rounded-lg font-medium whitespace-nowrap">User Prompt</span>
                     <span className="text-slate-400">→</span>
-                    <span className="px-3 py-2 bg-purple-100 text-purple-700 rounded-lg font-medium whitespace-nowrap">Data Analysis</span>
+                    <span className="px-3 py-2 bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 rounded-lg font-medium whitespace-nowrap">Data Analysis</span>
                     <span className="text-slate-400">→</span>
-                    <span className="px-3 py-2 bg-blue-100 text-blue-700 rounded-lg font-medium whitespace-nowrap">Tambo AI</span>
+                    <span className="px-3 py-2 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 rounded-lg font-medium whitespace-nowrap">Tambo AI</span>
                     <span className="text-slate-400">→</span>
-                    <span className="px-3 py-2 bg-emerald-100 text-emerald-700 rounded-lg font-medium whitespace-nowrap">Component Rendering</span>
+                    <span className="px-3 py-2 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-lg font-medium whitespace-nowrap">Component Rendering</span>
                     <span className="text-slate-400">→</span>
-                    <span className="px-3 py-2 bg-amber-100 text-amber-700 rounded-lg font-medium whitespace-nowrap">Dashboard</span>
+                    <span className="px-3 py-2 bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 rounded-lg font-medium whitespace-nowrap">Dashboard</span>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                  <Database className="w-4 h-4 text-slate-500" />
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2 flex items-center gap-2">
+                  <Database className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                   Data Pipeline
                 </h3>
-                <ul className="text-sm text-slate-600 space-y-2">
+                <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-2">
                   <li className="flex items-start gap-2">
                     <span className="text-indigo-500 mt-0.5">•</span>
                     <span><strong>Upload:</strong> CSV/JSON files are parsed client-side using PapaParse with automatic type detection</span>
@@ -275,7 +275,7 @@ export default function Documentation() {
               </div>
 
               <div>
-                <h3 className="font-semibold text-slate-900 mb-3">Tech Stack</h3>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">Tech Stack</h3>
                 <div className="flex flex-wrap gap-2">
                   {[
                     { label: "React 19", color: "bg-blue-100 text-blue-700" },
@@ -303,33 +303,33 @@ export default function Documentation() {
 
         {/* Data Formats */}
         <motion.section {...fadeIn} transition={{ delay: 0.3 }}>
-          <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
             <Database className="w-5 h-5 text-cyan-500" />
             Supported Data Formats
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
-            <Card className="p-5 border-2 border-slate-200">
-              <h3 className="font-semibold text-slate-900 mb-3">CSV Files</h3>
-              <div className="bg-slate-50 rounded-lg p-3 font-mono text-xs text-slate-600">
+            <Card className="p-5 border-2 border-slate-200 dark:border-slate-700">
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">CSV Files</h3>
+              <div className="bg-slate-50 dark:bg-slate-800/60 rounded-lg p-3 font-mono text-xs text-slate-600 dark:text-slate-400">
                 <p>Date,Product,Revenue,Quantity</p>
                 <p>2026-01-01,Widget A,1500,25</p>
                 <p>2026-01-02,Widget B,2300,40</p>
                 <p>2026-01-03,Widget A,1800,30</p>
               </div>
-              <p className="text-xs text-slate-500 mt-3">
+              <p className="text-xs text-slate-500 dark:text-slate-500 mt-3">
                 Headers auto-detected. Numeric columns parsed automatically.
               </p>
             </Card>
-            <Card className="p-5 border-2 border-slate-200">
-              <h3 className="font-semibold text-slate-900 mb-3">JSON Files</h3>
-              <div className="bg-slate-50 rounded-lg p-3 font-mono text-xs text-slate-600">
+            <Card className="p-5 border-2 border-slate-200 dark:border-slate-700">
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">JSON Files</h3>
+              <div className="bg-slate-50 dark:bg-slate-800/60 rounded-lg p-3 font-mono text-xs text-slate-600 dark:text-slate-400">
                 <p>{"["}</p>
                 <p>{"  { \"name\": \"Alice\", \"sales\": 1500 },"}</p>
                 <p>{"  { \"name\": \"Bob\", \"sales\": 2300 },"}</p>
                 <p>{"  { \"name\": \"Carol\", \"sales\": 1800 }"}</p>
                 <p>{"]"}</p>
               </div>
-              <p className="text-xs text-slate-500 mt-3">
+              <p className="text-xs text-slate-500 dark:text-slate-500 mt-3">
                 Array of objects format. Nested objects flattened automatically.
               </p>
             </Card>
@@ -338,7 +338,7 @@ export default function Documentation() {
 
         {/* Features */}
         <motion.section {...fadeIn} transition={{ delay: 0.35 }}>
-          <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-amber-500" />
             Key Features
           </h2>
@@ -351,12 +351,12 @@ export default function Documentation() {
               { title: "PDF/JPG/PNG Export", desc: "Export dashboards to share with your team", icon: <Download className="w-4 h-4" /> },
               { title: "Generative UI", desc: "Powered by Tambo — AI decides what UI to render", icon: <Sparkles className="w-4 h-4" /> },
             ].map((feat, i) => (
-              <Card key={i} className="p-4 border-2 border-slate-200 hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-2 mb-2 text-indigo-600">
+              <Card key={i} className="p-4 border-2 border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-2 mb-2 text-indigo-600 dark:text-indigo-400">
                   {feat.icon}
-                  <h3 className="font-semibold text-slate-900 text-sm">{feat.title}</h3>
+                  <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-sm">{feat.title}</h3>
                 </div>
-                <p className="text-xs text-slate-600">{feat.desc}</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400">{feat.desc}</p>
               </Card>
             ))}
           </div>
@@ -364,7 +364,7 @@ export default function Documentation() {
 
         {/* Footer */}
         <div className="text-center pb-8 pt-4">
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-400 dark:text-slate-600">
             Built for the Tambo AI Hackathon &bull; Powered by Tambo Generative UI
           </p>
         </div>

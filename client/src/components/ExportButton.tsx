@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, type RefObject } from "react";
 import { Button } from "@/components/ui/button";
 import { Download, FileImage, FileText, Share2, Check, Loader2 } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 
@@ -23,6 +24,7 @@ export default function ExportButton({
   const [exporting, setExporting] = useState<"pdf" | "jpg" | "png" | null>(null);
   const [done, setDone] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -46,7 +48,7 @@ export default function ExportButton({
       scale: 2,
       useCORS: true,
       allowTaint: true,
-      backgroundColor: "#f8fafc",
+      backgroundColor: theme === "dark" ? "#0f172a" : "#f8fafc",
       logging: false,
       // Capture full scrollable content
       windowWidth: el.scrollWidth,
@@ -205,24 +207,24 @@ export default function ExportButton({
       </Button>
 
       {isOpen && !isExporting && (
-        <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1 min-w-[160px]">
+        <div className="absolute right-0 top-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg z-50 py-1 min-w-[160px]">
           <button
             onClick={exportAsPDF}
-            className="w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-3 transition-colors"
+            className="w-full px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-3 transition-colors"
           >
             <FileText className="w-4 h-4 text-red-500" />
             Export as PDF
           </button>
           <button
             onClick={exportAsJPG}
-            className="w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-3 transition-colors"
+            className="w-full px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-3 transition-colors"
           >
             <FileImage className="w-4 h-4 text-blue-500" />
             Export as JPG
           </button>
           <button
             onClick={exportAsPNG}
-            className="w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-3 transition-colors"
+            className="w-full px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-3 transition-colors"
           >
             <Download className="w-4 h-4 text-green-500" />
             Export as PNG

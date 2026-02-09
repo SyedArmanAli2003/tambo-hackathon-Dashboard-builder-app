@@ -107,11 +107,11 @@ export default function DataTable({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.25 }}
     >
-      <Card className="p-6 border-2 border-slate-200 hover:shadow-lg transition-shadow overflow-hidden">
+      <Card className="p-6 border-2 border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow overflow-hidden">
         <div className="flex items-center justify-between gap-3 mb-4">
-          <h3 className="text-lg font-bold text-slate-900">{title}</h3>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">{title}</h3>
           {isDemoFallback ? (
-            <span className="text-xs px-2 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200">
+            <span className="text-xs px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
               Demo data
             </span>
           ) : null}
@@ -119,13 +119,13 @@ export default function DataTable({
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b-2 border-slate-200">
+              <tr className="border-b-2 border-slate-200 dark:border-slate-700">
                 {finalColumns.map((column) => (
                   <th
                     key={column}
                     onClick={() => handleSort(column)}
-                    className={`px-4 py-3 text-left text-sm font-semibold text-slate-900 ${
-                      sortable ? "cursor-pointer hover:bg-slate-100" : ""
+                    className={`px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-slate-100 ${
+                      sortable ? "cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800" : ""
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -145,7 +145,7 @@ export default function DataTable({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: rowIndex * 0.05 }}
-                  className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
+                  className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
                 >
                   {finalColumns.map((column) => {
                     // Get the key from the data row that matches the column name
@@ -153,7 +153,7 @@ export default function DataTable({
                     return (
                       <td
                         key={`${rowIndex}-${column}`}
-                        className="px-4 py-3 text-sm text-slate-700"
+                        className="px-4 py-3 text-sm text-slate-700 dark:text-slate-300"
                       >
                         {columnKey ? formatTableValue(row[columnKey]) : "—"}
                       </td>
@@ -164,7 +164,7 @@ export default function DataTable({
             </tbody>
           </table>
         </div>
-        <div className="mt-4 text-xs text-slate-500">
+        <div className="mt-4 text-xs text-slate-500 dark:text-slate-500">
           Showing {sortedData.length} records
         </div>
       </Card>

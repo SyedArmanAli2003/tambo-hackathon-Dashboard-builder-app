@@ -114,14 +114,14 @@ export default function DataUpload() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 top-full mt-2 w-80 bg-white border border-slate-200 rounded-lg shadow-lg z-50"
+            className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg z-50"
           >
             <div className="p-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-slate-900">Your Data</h3>
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Your Data</h3>
                 <button
                   onClick={() => setShowPanel(false)}
-                  className="text-slate-400 hover:text-slate-600"
+                  className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -135,8 +135,8 @@ export default function DataUpload() {
                 onClick={() => fileInputRef.current?.click()}
                 className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors ${
                   dragOver
-                    ? "border-indigo-400 bg-indigo-50"
-                    : "border-slate-300 hover:border-slate-400 bg-slate-50"
+                    ? "border-indigo-400 bg-indigo-50 dark:bg-indigo-500/10"
+                    : "border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500 bg-slate-50 dark:bg-slate-900/50"
                 }`}
               >
                 <input
@@ -153,18 +153,18 @@ export default function DataUpload() {
                   </div>
                 ) : (
                   <>
-                    <FileSpreadsheet className="w-6 h-6 text-slate-400 mx-auto mb-1" />
-                    <p className="text-xs text-slate-600">
+                    <FileSpreadsheet className="w-6 h-6 text-slate-400 dark:text-slate-500 mx-auto mb-1" />
+                    <p className="text-xs text-slate-600 dark:text-slate-400">
                       Drop a <strong>.csv</strong> or <strong>.json</strong> file here
                     </p>
-                    <p className="text-xs text-slate-400 mt-1">or click to browse</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">or click to browse</p>
                   </>
                 )}
               </div>
 
               {/* Parse Error */}
               {parseError && (
-                <div className="mt-2 flex items-start gap-2 text-xs text-red-600 bg-red-50 p-2 rounded">
+                <div className="mt-2 flex items-start gap-2 text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 p-2 rounded">
                   <AlertCircle className="w-3 h-3 mt-0.5 shrink-0" />
                   <span>{parseError}</span>
                 </div>
@@ -173,7 +173,7 @@ export default function DataUpload() {
               {/* Dataset List */}
               {datasets.length > 0 && (
                 <div className="mt-3 space-y-2">
-                  <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-500 uppercase tracking-wide">
                     Datasets
                   </p>
                   {datasets.map((ds) => (
@@ -182,8 +182,8 @@ export default function DataUpload() {
                       onClick={() => setActiveDataset(ds.id)}
                       className={`flex items-center justify-between p-2 rounded-md cursor-pointer text-xs transition-colors ${
                         ds.id === activeDatasetId
-                          ? "bg-indigo-50 border border-indigo-200"
-                          : "bg-slate-50 border border-transparent hover:bg-slate-100"
+                          ? "bg-indigo-50 dark:bg-indigo-500/15 border border-indigo-200 dark:border-indigo-500/30"
+                          : "bg-slate-50 dark:bg-slate-900/40 border border-transparent hover:bg-slate-100 dark:hover:bg-slate-700/50"
                       }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
@@ -191,8 +191,8 @@ export default function DataUpload() {
                           <Check className="w-3 h-3 text-indigo-600 shrink-0" />
                         )}
                         <div className="min-w-0">
-                          <p className="font-medium text-slate-800 truncate">{ds.name}</p>
-                          <p className="text-slate-500">
+                          <p className="font-medium text-slate-800 dark:text-slate-200 truncate">{ds.name}</p>
+                          <p className="text-slate-500 dark:text-slate-500">
                             {ds.rowCount} rows · {ds.columns.length} cols
                           </p>
                         </div>
@@ -213,7 +213,7 @@ export default function DataUpload() {
 
               {/* Hint */}
               {datasets.length > 0 && (
-                <p className="mt-3 text-xs text-slate-500">
+                <p className="mt-3 text-xs text-slate-500 dark:text-slate-500">
                   Active dataset will be used when generating dashboards.
                 </p>
               )}

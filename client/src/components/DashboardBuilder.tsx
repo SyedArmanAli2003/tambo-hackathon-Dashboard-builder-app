@@ -30,11 +30,11 @@ class ComponentErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+        <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
           <div>
-            <p className="text-sm font-medium text-red-800">Component failed to render</p>
-            <p className="text-xs text-red-600 mt-1">{this.state.error?.message || "Unknown error"}</p>
+            <p className="text-sm font-medium text-red-800 dark:text-red-300">Component failed to render</p>
+            <p className="text-xs text-red-600 dark:text-red-400 mt-1">{this.state.error?.message || "Unknown error"}</p>
           </div>
         </div>
       );
@@ -185,7 +185,7 @@ RULES:
   }, [messages.length]);
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col">
+    <div className="min-h-[calc(100vh-56px)] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 flex flex-col">
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto px-6 py-8">
@@ -197,30 +197,30 @@ RULES:
               transition={{ duration: 0.5 }}
               className="max-w-2xl mx-auto"
             >
-              <div className="bg-white rounded-lg border border-slate-200 p-8 text-center shadow-sm">
+              <div className="bg-white/80 dark:bg-slate-800/60 backdrop-blur-xl rounded-lg border border-slate-200 dark:border-slate-700/60 p-8 text-center shadow-sm">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <Sparkles className="w-6 h-6 text-indigo-500" />
-                  <h2 className="text-2xl font-bold text-slate-900">
+                  <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                     Welcome to Dashboard Builder
                   </h2>
                 </div>
-                <p className="text-slate-600 mb-6">
+                <p className="text-slate-600 dark:text-slate-400 mb-6">
                   Describe the dashboard you want in natural language. Our AI will
                   intelligently choose and render the right components for you.
                 </p>
-                <div className="space-y-3 text-left bg-slate-50 rounded-lg p-6 mb-6">
-                  <p className="text-sm font-semibold text-slate-700 mb-3">Try asking for:</p>
+                <div className="space-y-3 text-left bg-slate-50 dark:bg-slate-900/50 rounded-lg p-6 mb-6">
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Try asking for:</p>
                   <div className="space-y-2">
-                    <p className="text-sm text-slate-600 flex items-center gap-2">
+                    <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2">
                       <span className="text-xl">📊</span> "Show me sales by region with revenue trends"
                     </p>
-                    <p className="text-sm text-slate-600 flex items-center gap-2">
+                    <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2">
                       <span className="text-xl">📈</span> "Create a user growth dashboard"
                     </p>
-                    <p className="text-sm text-slate-600 flex items-center gap-2">
+                    <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2">
                       <span className="text-xl">🔗</span> "Analyze revenue vs customer correlation"
                     </p>
-                    <p className="text-sm text-slate-600 flex items-center gap-2">
+                    <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2">
                       <span className="text-xl">📁</span> Upload a CSV/JSON file, then ask about your data
                     </p>
                   </div>
@@ -250,7 +250,7 @@ RULES:
                           className={`max-w-lg px-4 py-3 rounded-lg ${
                             isUser
                               ? "bg-indigo-600 text-white rounded-br-none"
-                              : "bg-slate-100 text-slate-900 rounded-bl-none"
+                              : "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-bl-none"
                           }`}
                         >
                           <p className="text-sm whitespace-pre-wrap">{text}</p>
@@ -260,7 +260,7 @@ RULES:
 
                     {/* AI-rendered component */}
                     {msg.renderedComponent && (
-                      <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+                      <div className="bg-white/80 dark:bg-slate-800/60 backdrop-blur-xl rounded-lg border border-slate-200 dark:border-slate-700/60 p-6 shadow-sm hover:shadow-md transition-shadow">
                         <ComponentErrorBoundary>
                           {msg.renderedComponent}
                         </ComponentErrorBoundary>
@@ -283,11 +283,11 @@ RULES:
               >
                 <div className="text-center">
                   <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mx-auto mb-3" />
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
                     {generationStatusMessage || "Thinking..."}
                   </p>
                   {generationStage && generationStage !== "IDLE" && (
-                    <p className="text-xs text-slate-400 mt-1 capitalize">
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 capitalize">
                       {generationStage.replace(/_/g, " ").toLowerCase()}
                     </p>
                   )}
@@ -299,7 +299,7 @@ RULES:
           {/* Tip for empty state */}
           {messages.length === 0 && (
             <div className="max-w-2xl mx-auto mt-8 text-center">
-              <p className="text-xs text-slate-500 flex items-center justify-center gap-2">
+              <p className="text-xs text-slate-500 dark:text-slate-500 flex items-center justify-center gap-2">
                 <span>💡</span> Tip: Upload your data first, then ask the AI to visualize it
               </p>
             </div>
@@ -308,7 +308,7 @@ RULES:
       </div>
 
       {/* Input Area */}
-      <div className="bg-white border-t border-slate-200 shadow-lg">
+      <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200 dark:border-slate-700/60 shadow-lg">
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex gap-3">
             <input
@@ -317,7 +317,7 @@ RULES:
               onChange={(e) => setValue(e.target.value)}
               onKeyDown={handleKeyPress}
               placeholder="Describe your dashboard (e.g., 'Show me sales by region with revenue trends')..."
-              className="flex-1 px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+              className="flex-1 px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
               disabled={isLoading}
             />
             <Button
@@ -338,7 +338,7 @@ RULES:
               )}
             </Button>
           </div>
-          <p className="text-xs text-slate-500 mt-2">
+          <p className="text-xs text-slate-500 dark:text-slate-500 mt-2">
             💡 Tip: Upload your data, then describe what you want to see
           </p>
         </div>
