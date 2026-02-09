@@ -1,16 +1,25 @@
 import { useLocation } from "wouter";
-import { BookOpen, LayoutDashboard } from "lucide-react";
+import { BookOpen, LayoutDashboard, Trash2 } from "lucide-react";
+import DataUpload from "@/components/DataUpload";
+import ExportButton from "@/components/ExportButton";
+import { useData } from "@/contexts/DataContext";
+import { useDashboardNav } from "@/contexts/DashboardNavContext";
+import { Button } from "@/components/ui/button";
 
 /**
  * Navbar — persistent top navigation bar across all pages.
  */
 export default function Navbar() {
   const [location, setLocation] = useLocation();
+  const { activeDataset } = useData();
+  const { state: dashState } = useDashboardNav();
 
   const links = [
     { href: "/", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
     { href: "/docs", label: "Docs", icon: <BookOpen className="w-4 h-4" /> },
   ];
+
+  const isHome = location === "/";
 
   return (
     <nav className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
@@ -29,7 +38,7 @@ export default function Navbar() {
             </span>
           </button>
 
-          {/* Nav Links */}
+          {/* Nav Links + Actions */}
           <div className="flex items-center gap-1">
             {links.map((link) => {
               const isActive = link.href === "/"
@@ -51,9 +60,46 @@ export default function Navbar() {
                 </button>
               );
             })}
+
+            {/* Dashboard actions */}
+            {isHome && (
+              <>
+                <div className="w-px h-6 bg-slate-200 mx-2" />
+                <DataUpload />
+                {dashState?.hasMessages && (
+                  <>
+                    <ExportButton
+                      targetRef={dashState.dashboardRef}
+                      fileName={activeDataset ? `dashboard-${activeDataset.name}` : "dashboard"}
+                    />
+                    <Button
+                      onClick={dashState.onClear}
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-2"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Clear
+                    </Button>
+                  </>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Dataset info strip */}
+      {isHome && activeDataset && (
+        <div className="bg-slate-50 border-t border-slate-100">
+          <div className="max-w-7xl mx-auto px-6 py-1.5">
+            <p className="text-xs text-slate-600 flex items-center gap-1">
+              <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
+              Dataset: <strong>{activeDataset.name}</strong> ({activeDataset.rowCount} rows, {activeDataset.columns.length} cols)
+            </p>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

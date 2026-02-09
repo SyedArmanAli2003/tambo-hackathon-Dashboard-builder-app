@@ -1,17 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { useData } from "@/contexts/DataContext";
-import DataUpload from "@/components/DataUpload";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Loader2, Trash2, Sparkles, AlertTriangle } from "lucide-react";
+import { Send, Loader2, Sparkles, AlertTriangle } from "lucide-react";
 import { useTamboThread, useTamboThreadInput } from "@tambo-ai/react";
-import { useMemo, useRef, Component, type ReactNode } from "react";
+import { useMemo, useRef, useEffect, Component, type ReactNode } from "react";
 import {
   analyzeDataset,
   buildAnalysisSummaryText,
   findRelevantAggregation,
   type DataSummary,
 } from "@/lib/dataAnalysis";
-import ExportButton from "@/components/ExportButton";
+import { useDashboardNav } from "@/contexts/DashboardNavContext";
 
 /**
  * Inline error boundary that catches crashes in AI-rendered components
@@ -54,6 +53,7 @@ export default function DashboardBuilder() {
   const { thread, startNewThread, generationStage, generationStatusMessage } = useTamboThread();
   const { value, setValue, submit, isPending } = useTamboThreadInput();
   const dashboardContentRef = useRef<HTMLDivElement>(null);
+  const { register } = useDashboardNav();
 
   const messages = thread?.messages ?? [];
   const isLoading = isPending || (generationStage !== "IDLE" && generationStage !== "COMPLETE" && generationStage !== "ERROR");
@@ -179,44 +179,13 @@ RULES:
     return "";
   };
 
+  // Register dashboard state with navbar context
+  useEffect(() => {
+    register({ dashboardRef: dashboardContentRef, hasMessages: messages.length > 0, onClear: handleClear });
+  }, [messages.length]);
+
   return (
     <div className="min-h-[calc(100vh-56px)] bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col">
-      {/* Action Bar */}
-      <div className="bg-white border-b border-slate-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-          <p className="text-sm text-slate-600">
-            {activeDataset ? (
-              <span className="flex items-center gap-1">
-                <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
-                Dataset: <strong>{activeDataset.name}</strong> ({activeDataset.rowCount} rows, {activeDataset.columns.length} cols)
-              </span>
-            ) : (
-              <span className="text-slate-500">No dataset loaded — upload CSV/JSON to get started</span>
-            )}
-          </p>
-          <div className="flex items-center gap-2">
-            <DataUpload />
-            {messages.length > 0 && (
-              <>
-                <ExportButton
-                  targetRef={dashboardContentRef}
-                  fileName={activeDataset ? `dashboard-${activeDataset.name}` : "dashboard"}
-                />
-                <Button
-                  onClick={handleClear}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  Clear
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto px-6 py-8">

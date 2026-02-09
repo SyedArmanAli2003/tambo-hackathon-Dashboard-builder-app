@@ -6,6 +6,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { DataProvider } from "./contexts/DataContext";
+import { DashboardNavProvider } from "./contexts/DashboardNavContext";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
 import { TamboProvider } from "@tambo-ai/react";
@@ -43,8 +44,10 @@ function App() {
           {tamboApiKey ? (
             <TamboProvider apiKey={tamboApiKey} components={tamboComponents}>
               <DataProvider>
-                <Navbar />
-                <Router />
+                <DashboardNavProvider>
+                  <Navbar />
+                  <Router />
+                </DashboardNavProvider>
               </DataProvider>
             </TamboProvider>
           ) : (
