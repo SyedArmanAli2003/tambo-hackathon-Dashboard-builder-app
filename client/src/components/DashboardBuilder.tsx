@@ -4,10 +4,18 @@ import DataUpload from "@/components/DataUpload";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Loader2, Trash2, Sparkles } from "lucide-react";
 import { useTamboThread, useTamboThreadInput } from "@tambo-ai/react";
+import { useMemo } from "react";
+import {
+  analyzeDataset,
+  buildAnalysisSummaryText,
+  findRelevantAggregation,
+  type DataSummary,
+} from "@/lib/dataAnalysis";
 
 /**
  * Dashboard Builder Component
- * Uses real Tambo AI to generate dashboard components from natural language
+ * Uses real Tambo AI to generate dashboard components from natural language.
+ * Pre-analyzes uploaded data so the AI can give intelligent, query-specific answers.
  */
 export default function DashboardBuilder() {
   const { activeDataset } = useData();
@@ -17,21 +25,99 @@ export default function DashboardBuilder() {
   const messages = thread?.messages ?? [];
   const isLoading = isPending || (generationStage !== "IDLE" && generationStage !== "COMPLETE" && generationStage !== "ERROR");
 
+  // Pre-compute data analysis whenever the active dataset changes
+  const dataSummary: DataSummary | null = useMemo(() => {
+    if (!activeDataset) return null;
+    return analyzeDataset(
+      activeDataset.data,
+      activeDataset.columns,
+      activeDataset.columnTypes
+    );
+  }, [activeDataset]);
+
   const handleGenerate = async () => {
     if (!value.trim() || isLoading) return;
 
-    // Build additional context with uploaded data if available
+    // Build rich additional context with analysis
     const additionalContext: Record<string, any> = {};
-    if (activeDataset) {
-      additionalContext.uploadedData = {
+
+    // System-level instruction to make the AI behave like a data analyst
+    additionalContext.systemInstruction = `You are an expert data analyst and dashboard builder. Your job is to:
+1. UNDERSTAND the user's question and figure out EXACTLY what they want to see.
+2. ANALYZE the provided dataset to compute the correct answer.
+3. CHOOSE the right visualization component(s) for the answer.
+4. COMPUTE and AGGREGATE the actual data from the dataset — do NOT use placeholder or made-up numbers.
+5. ALWAYS respond with relevant, query-specific content. Different questions MUST produce different outputs.
+
+RULES:
+- If the user asks a QUESTION (e.g. "which product has highest revenue?"), answer it with a TextBlock containing your analysis AND show a supporting chart.
+- If the user asks for a VISUALIZATION (e.g. "show revenue by region"), pick the right chart type and aggregate the data correctly.
+- For KPI/summary requests, compute the real values (sum, average, count, etc.) from the data.
+- For comparisons, use BarChart. For trends over time, use LineChart. For proportions, use PieChart. For correlations, use ScatterPlot. For lists/details, use DataTable.
+- You can render MULTIPLE components in a single response when appropriate.
+- ALWAYS pass the actual computed/aggregated data arrays to component props — never leave data empty.
+- Format numbers nicely (e.g. "$1.2M" instead of "1234567").
+- When the user's question is unrelated to the data, politely explain what data is available and suggest relevant queries.`;
+
+    if (activeDataset && dataSummary) {
+      // Provide the full analysis context
+      const summaryText = buildAnalysisSummaryText(dataSummary);
+      const relevantAgg = findRelevantAggregation(dataSummary, value);
+
+      additionalContext.datasetInfo = {
         name: activeDataset.name,
+        rowCount: activeDataset.rowCount,
         columns: activeDataset.columns,
         columnTypes: activeDataset.columnTypes,
-        rowCount: activeDataset.rowCount,
-        sampleRows: activeDataset.data.slice(0, 5),
-        data: activeDataset.data,
       };
-      additionalContext.instruction = `The user has uploaded a dataset called "${activeDataset.name}" with ${activeDataset.rowCount} rows and columns: ${activeDataset.columns.join(", ")}. Use this data to generate the requested charts and visualizations. Pass the actual data arrays to the component props.`;
+
+      additionalContext.analysisSummary = summaryText;
+
+      // Pass full column stats
+      additionalContext.columnStats = dataSummary.columnStats;
+
+      // Pass relevant pre-computed aggregation if found
+      if (relevantAgg) {
+        additionalContext.relevantAggregation = {
+          description: relevantAgg.description,
+          groupBy: relevantAgg.groupBy,
+          metric: relevantAgg.metric,
+          operation: relevantAgg.operation,
+          data: relevantAgg.data,
+        };
+      }
+
+      // Pass top correlations
+      if (dataSummary.correlations.length > 0) {
+        additionalContext.correlations = dataSummary.correlations
+          .sort((a, b) => Math.abs(b.correlation) - Math.abs(a.correlation))
+          .slice(0, 5)
+          .map((c) => ({
+            x: c.xColumn,
+            y: c.yColumn,
+            r: c.correlation,
+            scatterData: c.scatterData.slice(0, 50),
+          }));
+      }
+
+      // Pass a compact version of the data (limit rows for token budget)
+      const dataSlice = activeDataset.data.slice(0, 200);
+      additionalContext.data = dataSlice;
+
+      // Available aggregations list
+      additionalContext.availableAggregations = dataSummary.precomputedAggregations
+        .slice(0, 30)
+        .map((a) => ({
+          description: a.description,
+          groupBy: a.groupBy,
+          metric: a.metric,
+          operation: a.operation,
+          data: a.data,
+        }));
+
+      additionalContext.instruction = `The user uploaded "${activeDataset.name}" (${activeDataset.rowCount} rows, columns: ${activeDataset.columns.join(", ")}). Use the data, analysis summary, and pre-computed aggregations provided to answer their query accurately. The aggregation data is already computed and ready to use as chart data — just map it to the right component props format.`;
+    } else {
+      additionalContext.instruction = `No dataset is uploaded. If the user asks about data, tell them to upload a CSV or JSON file first using the upload button. You can still answer general questions or show example dashboards with sample data you generate.`;
     }
 
     await submit({ additionalContext });

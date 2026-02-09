@@ -1,0 +1,36 @@
+Employee_ID,Name,Department,Role,Hire_Date,Years_Experience,Salary,Performance_Score,Projects_Completed,Bugs_Fixed,Code_Reviews,Training_Hours,Satisfaction_Score,Overtime_Hours,Absentee_Days,Location,Gender,Education
+EMP001,Sarah Chen,Engineering,Senior Developer,2020-03-15,8,145000,94,12,187,156,42,4.8,28,2,San Francisco,Female,Masters
+EMP002,James Wilson,Engineering,Junior Developer,2023-06-01,2,82000,78,5,45,32,68,4.1,45,5,San Francisco,Male,Bachelors
+EMP003,Maria Garcia,Engineering,Tech Lead,2018-09-10,12,178000,96,15,210,298,35,4.9,52,1,San Francisco,Female,PhD
+EMP004,Raj Patel,Engineering,Senior Developer,2019-11-20,9,152000,91,11,165,178,38,4.6,32,3,New York,Male,Masters
+EMP005,Emily Brown,Marketing,Marketing Manager,2021-01-08,6,112000,88,8,0,0,55,4.3,18,4,New York,Female,Masters
+EMP006,Michael Lee,Engineering,DevOps Engineer,2020-07-22,7,138000,85,9,120,89,48,4.2,62,6,Austin,Male,Bachelors
+EMP007,Lisa Anderson,Product,Product Manager,2019-04-14,10,155000,92,14,0,45,40,4.7,25,2,San Francisco,Female,MBA
+EMP008,David Kim,Engineering,Junior Developer,2024-01-10,1,78000,72,3,28,18,85,3.8,38,7,Austin,Male,Bachelors
+EMP009,Sophie Taylor,Design,UX Designer,2021-08-30,5,105000,89,10,0,67,52,4.5,15,3,New York,Female,Bachelors
+EMP010,Alex Martinez,Engineering,Senior Developer,2019-02-18,10,158000,93,13,198,201,36,4.7,35,2,San Francisco,Male,Masters
+EMP011,Rachel White,Sales,Sales Director,2017-06-05,14,165000,95,0,0,0,30,4.8,42,1,New York,Female,MBA
+EMP012,Tom Harris,Engineering,Frontend Developer,2022-03-20,4,98000,82,7,78,56,62,4.0,30,5,Austin,Male,Bachelors
+EMP013,Nina Petrova,Data Science,Data Scientist,2020-10-12,6,135000,90,9,34,72,45,4.5,22,3,San Francisco,Female,PhD
+EMP014,Chris Johnson,Engineering,Backend Developer,2021-05-15,5,115000,84,8,134,98,50,4.2,40,4,New York,Male,Masters
+EMP015,Amy Zhang,Finance,Financial Analyst,2022-01-03,4,95000,86,6,0,0,58,4.3,12,3,San Francisco,Female,Masters
+EMP016,Daniel Okafor,Engineering,Senior Developer,2018-12-01,11,162000,94,14,225,215,32,4.8,38,1,Austin,Male,Masters
+EMP017,Jessica Moore,HR,HR Director,2016-08-20,16,148000,91,0,0,0,42,4.6,20,2,New York,Female,Masters
+EMP018,Kevin Wright,Engineering,QA Engineer,2021-09-14,4,92000,80,6,312,45,55,3.9,35,6,Austin,Male,Bachelors
+EMP019,Laura Adams,Marketing,Content Strategist,2022-07-01,3,88000,83,7,0,0,65,4.1,10,4,San Francisco,Female,Bachelors
+EMP020,Ryan Thompson,Engineering,Tech Lead,2017-03-28,13,182000,97,18,245,320,28,4.9,55,1,San Francisco,Male,PhD
+EMP021,Priya Sharma,Data Science,ML Engineer,2020-04-06,7,148000,92,11,56,95,40,4.6,30,2,San Francisco,Female,PhD
+EMP022,Ben Carter,Sales,Account Executive,2023-02-14,2,72000,75,0,0,0,78,3.7,48,8,New York,Male,Bachelors
+EMP023,Mia Johnson,Design,UI Designer,2021-11-08,4,98000,87,9,0,58,50,4.4,12,3,Austin,Female,Bachelors
+EMP024,Jason Park,Engineering,DevOps Engineer,2019-07-15,8,142000,88,10,95,102,42,4.3,58,4,New York,Male,Masters
+EMP025,Olivia Scott,Product,Senior PM,2018-01-22,11,168000,94,16,0,78,35,4.7,28,2,San Francisco,Female,MBA
+EMP026,Samuel Green,Engineering,Backend Developer,2022-09-05,3,105000,81,6,112,65,60,4.0,32,5,Austin,Male,Bachelors
+EMP027,Hannah Lee,Finance,CFO,2015-04-10,18,225000,96,0,0,0,25,4.9,45,1,New York,Female,MBA
+EMP028,Tyler Brooks,Engineering,Frontend Developer,2023-04-18,2,85000,76,4,52,28,72,3.8,28,6,Austin,Male,Bachelors
+EMP029,Emma Nakamura,Data Science,Data Analyst,2022-06-12,3,92000,84,7,0,42,58,4.2,15,4,San Francisco,Female,Masters
+EMP030,Marcus Reed,Engineering,Senior Developer,2019-08-25,9,155000,93,12,192,188,34,4.7,36,2,New York,Male,Masters
+EMP031,Grace Liu,Engineering,Principal Engineer,2016-02-14,15,198000,98,20,280,350,22,5.0,48,0,San Francisco,Female,PhD
+EMP032,Nathan Cooper,Sales,Sales Manager,2020-05-20,7,125000,89,0,0,0,45,4.4,35,3,New York,Male,Bachelors
+EMP033,Isabella Torres,Marketing,VP Marketing,2017-10-01,13,175000,93,0,0,0,35,4.7,30,2,San Francisco,Female,MBA
+EMP034,Jack Sullivan,Engineering,Junior Developer,2024-03-01,1,76000,70,2,22,12,90,3.6,42,9,Austin,Male,Bachelors
+EMP035,Zara Khan,Design,Design Director,2018-05-12,11,158000,95,13,0,120,30,4.8,20,1,San Francisco,Female,Masters

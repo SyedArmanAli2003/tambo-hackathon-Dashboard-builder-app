@@ -1,0 +1,66 @@
+Date,Region,Product,Category,Units_Sold,Revenue,Cost,Profit,Customer_Segment,Sales_Rep,Discount_Percent,Rating,Returns
+2025-01-05,North America,Laptop Pro 15,Electronics,142,284000,170400,113600,Enterprise,Alice Johnson,5,4.7,3
+2025-01-05,Europe,Laptop Pro 15,Electronics,98,196000,117600,78400,Enterprise,Hans Mueller,8,4.5,5
+2025-01-05,Asia Pacific,Laptop Pro 15,Electronics,215,430000,258000,172000,SMB,Wei Zhang,10,4.6,7
+2025-01-05,North America,Wireless Mouse,Accessories,890,26700,13350,13350,Consumer,Bob Smith,0,4.2,12
+2025-01-05,Europe,Wireless Mouse,Accessories,654,19620,9810,9810,Consumer,Marie Dupont,0,4.1,8
+2025-01-12,North America,Laptop Pro 15,Electronics,156,312000,187200,124800,Enterprise,Alice Johnson,5,4.7,2
+2025-01-12,Europe,Laptop Pro 15,Electronics,110,220000,132000,88000,SMB,Hans Mueller,7,4.5,4
+2025-01-12,Asia Pacific,Cloud Server License,Software,320,960000,192000,768000,Enterprise,Wei Zhang,12,4.8,0
+2025-01-12,North America,Cloud Server License,Software,275,825000,165000,660000,Enterprise,Alice Johnson,10,4.9,0
+2025-01-12,Latin America,Wireless Mouse,Accessories,430,12900,6450,6450,Consumer,Carlos Rivera,0,4.0,15
+2025-01-19,North America,Standing Desk,Furniture,67,46900,28140,18760,Enterprise,Bob Smith,3,4.4,1
+2025-01-19,Europe,Standing Desk,Furniture,45,31500,18900,12600,SMB,Marie Dupont,5,4.3,2
+2025-01-19,Asia Pacific,Laptop Pro 15,Electronics,198,396000,237600,158400,Enterprise,Wei Zhang,8,4.6,6
+2025-01-19,North America,Noise Cancel Headphones,Accessories,312,93600,46800,46800,Consumer,Alice Johnson,0,4.8,4
+2025-01-19,Europe,Cloud Server License,Software,189,567000,113400,453600,Enterprise,Hans Mueller,15,4.7,0
+2025-01-26,North America,Laptop Pro 15,Electronics,178,356000,213600,142400,SMB,Bob Smith,6,4.5,5
+2025-01-26,Asia Pacific,Standing Desk,Furniture,89,62300,37380,24920,Enterprise,Wei Zhang,4,4.2,3
+2025-01-26,Latin America,Laptop Pro 15,Electronics,72,144000,86400,57600,Consumer,Carlos Rivera,10,4.4,8
+2025-01-26,Europe,Noise Cancel Headphones,Accessories,267,80100,40050,40050,Consumer,Marie Dupont,0,4.7,3
+2025-01-26,North America,Cloud Server License,Software,310,930000,186000,744000,Enterprise,Alice Johnson,12,4.9,0
+2025-02-02,North America,Laptop Pro 15,Electronics,165,330000,198000,132000,Enterprise,Alice Johnson,5,4.7,4
+2025-02-02,Europe,Laptop Pro 15,Electronics,120,240000,144000,96000,Enterprise,Hans Mueller,7,4.6,3
+2025-02-02,Asia Pacific,Wireless Mouse,Accessories,980,29400,14700,14700,Consumer,Wei Zhang,0,4.3,10
+2025-02-02,North America,Standing Desk,Furniture,78,54600,32760,21840,SMB,Bob Smith,3,4.4,2
+2025-02-02,Latin America,Cloud Server License,Software,145,435000,87000,348000,SMB,Carlos Rivera,8,4.6,0
+2025-02-09,Europe,Standing Desk,Furniture,56,39200,23520,15680,Enterprise,Marie Dupont,5,4.3,1
+2025-02-09,Asia Pacific,Laptop Pro 15,Electronics,230,460000,276000,184000,Enterprise,Wei Zhang,9,4.7,5
+2025-02-09,North America,Noise Cancel Headphones,Accessories,345,103500,51750,51750,Consumer,Alice Johnson,0,4.8,6
+2025-02-09,North America,Cloud Server License,Software,295,885000,177000,708000,Enterprise,Bob Smith,11,4.9,0
+2025-02-09,Latin America,Wireless Mouse,Accessories,510,15300,7650,7650,Consumer,Carlos Rivera,0,3.9,18
+2025-02-16,North America,Laptop Pro 15,Electronics,190,380000,228000,152000,Enterprise,Alice Johnson,5,4.7,3
+2025-02-16,Europe,Cloud Server License,Software,210,630000,126000,504000,Enterprise,Hans Mueller,13,4.8,0
+2025-02-16,Asia Pacific,Standing Desk,Furniture,95,66500,39900,26600,SMB,Wei Zhang,4,4.2,4
+2025-02-16,North America,Wireless Mouse,Accessories,920,27600,13800,13800,Consumer,Bob Smith,0,4.2,11
+2025-02-16,Latin America,Noise Cancel Headphones,Accessories,178,53400,26700,26700,Consumer,Carlos Rivera,0,4.5,7
+2025-02-23,North America,Cloud Server License,Software,330,990000,198000,792000,Enterprise,Alice Johnson,10,4.9,0
+2025-02-23,Europe,Laptop Pro 15,Electronics,135,270000,162000,108000,SMB,Hans Mueller,8,4.5,6
+2025-02-23,Asia Pacific,Noise Cancel Headphones,Accessories,290,87000,43500,43500,Consumer,Wei Zhang,0,4.6,5
+2025-02-23,North America,Standing Desk,Furniture,82,57400,34440,22960,Enterprise,Bob Smith,3,4.4,2
+2025-02-23,Latin America,Standing Desk,Furniture,38,26600,15960,10640,Consumer,Carlos Rivera,5,4.1,3
+2025-03-02,North America,Laptop Pro 15,Electronics,205,410000,246000,164000,Enterprise,Alice Johnson,5,4.8,2
+2025-03-02,Europe,Wireless Mouse,Accessories,710,21300,10650,10650,Consumer,Marie Dupont,0,4.2,9
+2025-03-02,Asia Pacific,Cloud Server License,Software,350,1050000,210000,840000,Enterprise,Wei Zhang,14,4.9,0
+2025-03-02,North America,Noise Cancel Headphones,Accessories,380,114000,57000,57000,Consumer,Bob Smith,0,4.8,4
+2025-03-02,Latin America,Laptop Pro 15,Electronics,85,170000,102000,68000,SMB,Carlos Rivera,9,4.4,6
+2025-03-09,Europe,Standing Desk,Furniture,62,43400,26040,17360,Enterprise,Hans Mueller,5,4.3,2
+2025-03-09,Asia Pacific,Laptop Pro 15,Electronics,245,490000,294000,196000,Enterprise,Wei Zhang,8,4.7,4
+2025-03-09,North America,Cloud Server License,Software,315,945000,189000,756000,Enterprise,Alice Johnson,11,4.9,0
+2025-03-09,Latin America,Wireless Mouse,Accessories,560,16800,8400,8400,Consumer,Carlos Rivera,0,4.0,20
+2025-03-09,Europe,Noise Cancel Headphones,Accessories,298,89400,44700,44700,Consumer,Marie Dupont,0,4.7,3
+2025-03-16,North America,Laptop Pro 15,Electronics,220,440000,264000,176000,Enterprise,Alice Johnson,5,4.8,3
+2025-03-16,Asia Pacific,Standing Desk,Furniture,102,71400,42840,28560,Enterprise,Wei Zhang,4,4.3,2
+2025-03-16,Europe,Cloud Server License,Software,225,675000,135000,540000,Enterprise,Hans Mueller,14,4.8,0
+2025-03-16,North America,Wireless Mouse,Accessories,950,28500,14250,14250,Consumer,Bob Smith,0,4.3,10
+2025-03-16,Latin America,Noise Cancel Headphones,Accessories,195,58500,29250,29250,Consumer,Carlos Rivera,0,4.5,8
+2025-03-23,North America,Cloud Server License,Software,345,1035000,207000,828000,Enterprise,Alice Johnson,10,4.9,0
+2025-03-23,Europe,Laptop Pro 15,Electronics,148,296000,177600,118400,Enterprise,Hans Mueller,7,4.6,4
+2025-03-23,Asia Pacific,Noise Cancel Headphones,Accessories,315,94500,47250,47250,Consumer,Wei Zhang,0,4.7,5
+2025-03-23,North America,Standing Desk,Furniture,92,64400,38640,25760,SMB,Bob Smith,3,4.5,1
+2025-03-23,Latin America,Standing Desk,Furniture,42,29400,17640,11760,Consumer,Carlos Rivera,5,4.1,4
+2025-03-30,North America,Laptop Pro 15,Electronics,235,470000,282000,188000,Enterprise,Alice Johnson,5,4.8,2
+2025-03-30,Europe,Wireless Mouse,Accessories,740,22200,11100,11100,Consumer,Marie Dupont,0,4.2,8
+2025-03-30,Asia Pacific,Cloud Server License,Software,370,1110000,222000,888000,Enterprise,Wei Zhang,15,4.9,0
+2025-03-30,North America,Noise Cancel Headphones,Accessories,398,119400,59700,59700,Consumer,Bob Smith,0,4.8,3
+2025-03-30,Latin America,Laptop Pro 15,Electronics,92,184000,110400,73600,SMB,Carlos Rivera,9,4.5,5
